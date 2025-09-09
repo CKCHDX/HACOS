@@ -1,22 +1,47 @@
-name : Build kernel
+name: Build Kernel & ISO
 
 on:
   push:
-      branches:
-        - main
-  workflow_dispatch: #allows manual triggering
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
 jobs:
-  build:
-    runs-on: ubuntu latest
+  build-hacos-kernel:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout source
-        uses: action/checkout@v3
-      - name: install dependencies
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Set up dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential libncurses-dev bison flex libssl-dev bc wget
+          sudo apt-get install -y build-essential xorriso qemu ovmf gcc-10 gcc-10-x86-64-linux-gnu gcc-x86-64-elf
 
-          -name: Configure Kernel
-            run: make defconfig
-          -name: Build Kernel
-            run: make -j$(nproc)
+      - name: Build HACOS Kernel and ISO
+        run: |
+          make clean
+          make
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: hacos-iso
+          path: hacos.iso
+
+      - name: Run QEMU Test (UEFI)
+        run: |
+          qemu-system-x86_64 \
+            -drive file=hacos.iso,media=cdrom \
+            -bios /usr/share/ovmf/OVMF.fd \
+            -nographic \
+            -serial mon:stdio
+
+      - name: Upload QEMU run log
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: qemu-log
+          path: qemu.log
+
