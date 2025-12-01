@@ -1,4 +1,4 @@
-# UEFI Hello OS Project
+# UEFI OS Project
 
 This project is a simple UEFI application that outputs "Hello" to the screen. It serves as a basic example of UEFI application development using the EDK II framework.
 
@@ -6,7 +6,7 @@ This project is a simple UEFI application that outputs "Hello" to the screen. It
 
 ```
 
-# HACOS UEFI OS Project
+# HACOS OS Project
 
 This project is a modular UEFI operating system base. It boots, initializes graphics, and displays a logo window. You can easily extend it to add kernel features, GUI, drivers, and security.
 
