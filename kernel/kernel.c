@@ -69,11 +69,65 @@ static int last_key_returned = -999;  // Track what we returned
 extern void userspace_main(uint32_t* framebuffer, uint32_t width,
                           uint32_t height, uint32_t pitch);
 
+// PS/2 Keyboard Initialization
+// Initializes the PS/2 keyboard controller after UEFI ExitBootServices()
+// Required because UEFI manages the controller during boot, leaving it in undefined state
+void init_ps2_keyboard() {
+    // Wait for keyboard controller to be ready
+    while (inb(KEYBOARD_STATUS_PORT) & 0x02);
+    
+    // Disable first PS/2 port (keyboard)
+    outb(KEYBOARD_STATUS_PORT, 0xAD);
+    
+    // Wait for controller
+    while (inb(KEYBOARD_STATUS_PORT) & 0x02);
+    
+    // Read controller configuration byte
+    outb(KEYBOARD_STATUS_PORT, 0x20);
+    while ((inb(KEYBOARD_STATUS_PORT) & 0x01) == 0);
+    uint8_t config = inb(KEYBOARD_DATA_PORT);
+    
+    // Enable keyboard interrupt (bit 0) and scancode translation (bit 6)
+    config |= 0x01;   // Enable keyboard interrupt
+    config &= ~0x10;  // Enable keyboard (clear disable bit)
+    config |= 0x40;   // Enable scancode translation
+    
+    // Write controller configuration byte
+    while (inb(KEYBOARD_STATUS_PORT) & 0x02);
+    outb(KEYBOARD_STATUS_PORT, 0x60);
+    while (inb(KEYBOARD_STATUS_PORT) & 0x02);
+    outb(KEYBOARD_DATA_PORT, config);
+    
+    // Enable keyboard
+    while (inb(KEYBOARD_STATUS_PORT) & 0x02);
+    outb(KEYBOARD_STATUS_PORT, 0xAE);
+    
+    // Reset keyboard
+    while (inb(KEYBOARD_STATUS_PORT) & 0x02);
+    outb(KEYBOARD_DATA_PORT, 0xFF);
+    
+    // Wait for keyboard acknowledgment (0xFA)
+    while ((inb(KEYBOARD_STATUS_PORT) & 0x01) == 0);
+    uint8_t ack = inb(KEYBOARD_DATA_PORT);
+    
+    // Wait for self-test result (0xAA = success)
+    while ((inb(KEYBOARD_STATUS_PORT) & 0x01) == 0);
+    uint8_t self_test = inb(KEYBOARD_DATA_PORT);
+    
+    // Flush any remaining data
+    while (inb(KEYBOARD_STATUS_PORT) & 0x01) {
+        inb(KEYBOARD_DATA_PORT);
+    }
+}
+
 void kernel_main(gop_mode_t *gop_mode) {
     uint32_t *framebuffer = (uint32_t *)gop_mode->framebuffer_base;
     uint32_t width = gop_mode->info->horizontal_resolution;
     uint32_t height = gop_mode->info->vertical_resolution;
     uint32_t pitch = gop_mode->info->pixels_per_scan_line;
+
+    // Initialize PS/2 keyboard controller
+    init_ps2_keyboard();
 
     userspace_main(framebuffer, width, height, pitch);
 
