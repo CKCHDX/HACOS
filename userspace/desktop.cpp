@@ -2,10 +2,13 @@
 
 extern "C" {
     void delay_ms(int ms);
-    int get_key_async();
 }
 
-// Helper function to copy strings safely
+// Display constants
+static const int CURSOR_BLINK_CYCLE = 60;      // Total frames for one blink cycle
+static const int CURSOR_BLINK_ON_FRAMES = 30;  // Frames cursor is visible
+static const int CHAR_WIDTH = 8;               // Character width in pixels
+static const int LINE_HEIGHT = 25;             // Line height for terminal text
 static void safe_strcpy(char* dest, const char* src, int maxLen) {
     int i;
     for (i = 0; i < maxLen - 1 && src[i] != '\0'; i++) {
@@ -70,9 +73,9 @@ void DesktopManager::drawTerminal() {
     if (!m_terminalVisible) return;
     
     int termX = 100;
-    int termY = 100;
+    int termY = 80;
     int termW = m_renderer.width() - 200;
-    int termH = 400;
+    int termH = m_renderer.height() - 200;  // Responsive to screen height
     
     // Terminal window with shadow
     m_renderer.drawFilledRectangle(termX + 3, termY + 3, termW, termH, 
@@ -94,14 +97,13 @@ void DesktopManager::drawTerminal() {
     
     // Draw command history
     int lineY = termY + 50;
-    int lineHeight = 25;
     
     for (int i = 0; i < m_historyCount && i < MAX_HISTORY; i++) {
         m_fontRenderer.drawText(termX + 15, lineY, "> ", 
                                Renderer::Color(6, 182, 212), 1);
         m_fontRenderer.drawText(termX + 35, lineY, m_history[i], 
                                Renderer::Color(200, 200, 200), 1);
-        lineY += lineHeight;
+        lineY += LINE_HEIGHT;
     }
     
     // Draw current command line
@@ -115,10 +117,10 @@ void DesktopManager::drawTerminal() {
     }
     
     // Blinking cursor
-    m_cursorBlink = (m_cursorBlink + 1) % 60;
-    if (m_cursorBlink < 30) {
-        int cursorX = termX + 35 + (m_commandLength * 8);
-        m_renderer.drawFilledRectangle(cursorX, lineY, 8, 16, 
+    m_cursorBlink = (m_cursorBlink + 1) % CURSOR_BLINK_CYCLE;
+    if (m_cursorBlink < CURSOR_BLINK_ON_FRAMES) {
+        int cursorX = termX + 35 + (m_commandLength * CHAR_WIDTH);
+        m_renderer.drawFilledRectangle(cursorX, lineY, CHAR_WIDTH, 16, 
                                       Renderer::Color(6, 182, 212));
     }
     
@@ -130,6 +132,8 @@ void DesktopManager::drawTerminal() {
 
 void DesktopManager::render() {
     // Modern desktop background with gradient effect
+    // Note: Full-screen redraw every frame is not optimal but acceptable
+    // for a simple OS. Could be optimized with dirty rectangle tracking.
     Renderer::Color bgTop(15, 20, 35);
     Renderer::Color bgBottom(20, 30, 50);
     

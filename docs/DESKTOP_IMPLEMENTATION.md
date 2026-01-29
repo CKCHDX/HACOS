@@ -140,7 +140,7 @@ char m_history[MAX_HISTORY][MAX_COMMAND_LENGTH];  // Command history
 ```
 
 - `MAX_COMMAND_LENGTH`: 64 characters
-- `MAX_HISTORY`: 10 commands
+- `MAX_HISTORY`: 20 commands (increased for better usability)
 
 ### String Operations
 

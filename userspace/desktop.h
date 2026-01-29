@@ -18,7 +18,7 @@ private:
     
     // Terminal state
     static const int MAX_COMMAND_LENGTH = 64;
-    static const int MAX_HISTORY = 10;
+    static const int MAX_HISTORY = 20;  // Increased from 10 for better usability
     char m_commandBuffer[MAX_COMMAND_LENGTH];
     int m_commandLength;
     char m_history[MAX_HISTORY][MAX_COMMAND_LENGTH];

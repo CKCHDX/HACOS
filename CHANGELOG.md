@@ -8,7 +8,7 @@ All notable changes to the HACOS project will be documented in this file.
 - **Interactive Desktop Environment**: Desktop now launches after successful login
 - **Terminal/Shell Window**: Fully functional command-line interface with:
   - Command input with blinking cursor
-  - Command history (up to 10 commands)
+  - Command history (up to 20 commands)
   - Built-in commands: `help`, `about`, `clear`, `version`, `sysinfo`, `echo`
   - ESC key to toggle terminal visibility
   - Visual feedback with cyan accent colors
