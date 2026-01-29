@@ -1,6 +1,7 @@
 #include "renderer.h"
 #include "input_manager.h"
 #include "font_renderer.h"
+#include "desktop.h"
 
 extern "C" {
     void delay_ms(int ms);
@@ -17,5 +18,11 @@ extern "C" void userspace_main(uint32_t* framebuffer, uint32_t width,
         return;
     }
     
-    while(1) delay_ms(100);
+    // Initialize renderer and desktop environment
+    Renderer renderer(framebuffer, width, height, pitch);
+    FontRenderer fontRenderer;
+    DesktopManager desktop(renderer, fontRenderer);
+    
+    // Run desktop environment
+    desktop.run();
 }
