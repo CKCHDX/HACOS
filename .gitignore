@@ -1,0 +1,29 @@
+# Build artifacts
+build/
+*.o
+*.so
+*.bin
+*.img
+*.efi
+*.EFI
+
+# OVMF firmware copies
+OVMF_VARS*.fd
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# CodeQL
+_codeql_detected_source_root
+
+# Temporary files
+/tmp/
+*.tmp
