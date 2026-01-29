@@ -1,12 +1,14 @@
 # HACOS - High-Performance Amateur Computing Operating System
 
-A custom UEFI-based x86_64 operating system written in C and C++, featuring a modern login interface, custom graphics rendering, and keyboard input handling. Built from scratch with a focus on low-level systems programming and elegant UI design.
+A custom UEFI-based x86_64 operating system written in C and C++, featuring a modern login interface, interactive desktop environment with terminal shell, custom graphics rendering, and keyboard input handling. Built from scratch with a focus on low-level systems programming and elegant UI design.
 
 ## ðŸš€ Features
 
 - **UEFI Bootloader** - EFI firmware support with graphical boot animation
 - **Custom Graphics Engine** - Direct framebuffer manipulation with anti-aliased rendering
 - **Modern Login Screen** - Minimalist dark-themed authentication interface with visual feedback
+- **Interactive Desktop** - Full desktop environment with taskbar, system info, and window management
+- **Terminal Shell** - Built-in command-line interface with command history and interactive input
 - **Keyboard Input System** - PS/2 and USB keyboard support via low-level port I/O
 - **C++ Userspace** - Type-safe application layer with custom renderer and input manager
 - **Boot Animations** - Orbital rings, pulsing cores, and smooth transitions
@@ -28,6 +30,11 @@ A custom UEFI-based x86_64 operating system written in C and C++, featuring a mo
 - 512MB+ RAM allocated
 
 ### Installation
+
+**Quick Setup (Automated):**
+```bash
+./setup.sh
+```
 
 **Ubuntu/Debian:**
 ```bash
@@ -124,12 +131,29 @@ qemu-system-x86_64 \
 3. **Kernel Initialization** sets up PS/2 keyboard driver
 4. **Userspace Launch** initializes graphics renderer
 5. **Login Screen** appears for user authentication
+6. **Desktop Environment** launches after successful login
+7. **Terminal Shell** provides interactive command interface
 
 ### Login Screen Controls
 - **Type** - Enter password (displayed as dots for security)
 - **Backspace** - Delete last character
 - **ESC** - Clear entire password
 - **Enter** - Submit password and authenticate
+
+### Desktop Environment Controls
+- **Type** - Enter commands in the terminal
+- **Enter** - Execute command
+- **Backspace** - Delete last character
+- **ESC** - Toggle terminal visibility
+
+### Terminal Commands
+Available commands in the HACOS terminal:
+- `help` - Display available commands with descriptions
+- `about` - Show information about HACOS
+- `version` - Display HACOS version and build date
+- `sysinfo` - Display system information (CPU, mode, kernel)
+- `echo` - Echo test to verify terminal is working
+- `clear` - Clear command history
 
 ## ðŸ—ï¸ Architecture
 
@@ -149,7 +173,9 @@ userspace_main() (main.cpp)
     â†“
 runLoginScreen() (login_consumer.cpp)
     â†“
-Desktop/Shell
+DesktopManager::run() (desktop.cpp)
+    â†"
+Interactive Terminal Shell
 ```
 
 ### Input Pipeline
@@ -337,20 +363,25 @@ This project is custom OS development for educational purposes. Feel free to use
 
 ## ðŸ‘¨â€ðŸ’» Development
 
+### Completed Features
+- âœ" Login screen keyboard interaction
+- âœ" Desktop environment with taskbar
+- âœ" Interactive terminal shell
+- âœ" Command-line interface
+
 ### Active Projects
-- Login screen keyboard interaction
-- Desktop environment
+- Window manager enhancements
 - File system support
-- Window manager
 - System calls & processes
+- Additional shell commands
 
 ### Future Features
 - [ ] File system (ext2/FAT32)
 - [ ] Process management
 - [ ] Multi-tasking kernel
-- [ ] GUI window manager
+- [ ] GUI window manager with draggable windows
 - [ ] Networking stack
-- [ ] Command-line shell
+- [ ] Text editor application
 
 ## ðŸ”— Related Projects
 

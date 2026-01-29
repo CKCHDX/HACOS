@@ -124,7 +124,7 @@ void DesktopManager::drawTerminal() {
     
     // Help text at bottom
     m_fontRenderer.drawText(termX + 15, termY + termH - 40, 
-                           "Commands: help, about, clear, version", 
+                           "Type 'help' for commands | ESC to hide", 
                            Renderer::Color(100, 120, 150), 1);
 }
 
@@ -166,12 +166,27 @@ void DesktopManager::executeCommand(const char* command) {
     // Simple command execution
     if (str_equals(command, "help")) {
         addToHistory("  Available commands:");
-        addToHistory("  help, about, clear, version");
+        addToHistory("  help     - Show this help");
+        addToHistory("  about    - About HACOS");
+        addToHistory("  version  - Show version");
+        addToHistory("  clear    - Clear terminal");
+        addToHistory("  sysinfo  - System info");
+        addToHistory("  echo     - Echo test");
     } else if (str_equals(command, "about")) {
         addToHistory("  HACOS - High-Performance Amateur");
         addToHistory("  Computing Operating System");
+        addToHistory("  Built from scratch in C/C++");
     } else if (str_equals(command, "version")) {
-        addToHistory("  HACOS v0.1.0-alpha");
+        addToHistory("  HACOS v0.2.0-alpha");
+        addToHistory("  Build date: 2026-01-29");
+    } else if (str_equals(command, "sysinfo")) {
+        addToHistory("  System Information:");
+        addToHistory("  CPU: x86_64");
+        addToHistory("  Mode: UEFI");
+        addToHistory("  Kernel: Monolithic");
+        addToHistory("  Shell: Built-in");
+    } else if (str_equals(command, "echo")) {
+        addToHistory("  Echo: Terminal is working!");
     } else if (str_equals(command, "clear")) {
         m_historyCount = 0;
     } else if (command[0] != '\0') {
